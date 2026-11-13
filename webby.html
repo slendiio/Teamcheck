@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Teamcheck TP2</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Fragebogen für eure Soft-Skills-Gruppe: Beiträge, Planung, Reflexion und Bewertung.">
+<meta property="og:title" content="Teamcheck TP2">
+<meta property="og:description" content="Fragebogen für eure Soft-Skills-Gruppe. Dauert ca. 10 Minuten.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: one narrow column; setup view or questionnaire view; sticky progress strip; one set-off send panel */
+:root {
+  --paper: #F3F5F8; --surface: #FFFFFF; --ink: #15212C; --muted: #5B6977; --line: #D6DDE4;
+  --accent: #1C5A8A; --accent-ink: #FFFFFF; --accent-soft: #E2ECF5; --ok: #1F7A4D; --warn: #9A5800;
+  --s1: #1C5A8A; --s2: #2E8B7A; --s3: #C07A1E; --s4: #7A5BB0; --s5: #B5485D; --s6: #5E7D2E; --s7: #3D7FC2; --s8: #8A6A4F;
+  --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0F151B; --surface: #17212A; --ink: #E5EBF0; --muted: #94A3B0; --line: #2A3743;
+    --accent: #74B1DF; --accent-ink: #0B1620; --accent-soft: #1A2D3D; --ok: #5DC48F; --warn: #E2A75C;
+    --s1: #74B1DF; --s2: #5CC4AE; --s3: #E2A75C; --s4: #AE93E0; --s5: #E07A8F; --s6: #A2C266; --s7: #8EC3F0; --s8: #C9A585;
+    color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+  padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface);
+}
+.wrap {
+  max-width: 660px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: var(--accent); }
+
+header.intro { padding-block: 40px 28px; }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+h1, h2 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(30px, 7vw, 40px); line-height: 1.1; letter-spacing: -.01em; }
+h2 { font-size: 24px; line-height: 1.2; }
+.lead { margin: 14px 0 0; max-width: 60ch; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 18px 0 0; padding: 0; list-style: none; color: var(--muted); font-size: 14px; }
+.facts li { display: flex; gap: 6px; }
+.facts b { color: var(--ink); font-weight: 600; }
+
+/* Setup */
+.steps { list-style: none; counter-reset: s; display: grid; gap: 8px; padding: 0; margin: 22px 0 0; }
+.steps li { counter-increment: s; display: flex; gap: 12px; align-items: baseline; }
+.steps li::before { content: counter(s); font-family: var(--font-display); font-weight: 700; color: var(--accent); min-width: 1.1em; }
+.setup-form { display: grid; gap: 24px; padding-block: 28px 8px; border-top: 1px solid var(--line); }
+.switch { display: flex; gap: 14px; align-items: flex-start; cursor: pointer; }
+.switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.track { flex: none; width: 46px; height: 28px; border-radius: 14px; background: var(--line); position: relative; transition: background .2s; margin-top: 2px; }
+.track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: var(--surface); box-shadow: 0 1px 2px rgba(0,0,0,.25); transition: transform .2s; }
+.switch input:checked + .track { background: var(--accent); }
+.switch input:checked + .track::after { transform: translateX(18px); }
+.switch input:focus-visible + .track { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sw-text { display: grid; gap: 2px; }
+.sw-text small { color: var(--muted); font-size: 14px; }
+.result { display: grid; gap: 12px; padding: 18px; border: 1px solid var(--accent); border-radius: 12px; background: var(--accent-soft); margin-block: 28px 8px; scroll-margin-top: 16px; }
+.result p { margin: 0; }
+.privacy { font-size: 13px; color: var(--muted); margin: 20px 0 48px; max-width: 60ch; }
+
+/* Progress */
+.progress { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+.progress .wrap { padding-block: 10px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.pp { min-width: 0; display: grid; gap: 5px; text-decoration: none; color: inherit; }
+.pp-top { display: flex; justify-content: space-between; gap: 6px; font-size: 12px; }
+.pp-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pp-count { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pp-bar { height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.pp-bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .25s ease; }
+.pp.done .pp-bar i { background: var(--ok); }
+
+/* Questions */
+.who { padding-block: 28px 8px; }
+section.part { padding-block: 36px 8px; border-top: 1px solid var(--line); margin-top: 28px; scroll-margin-top: 70px; }
+.part-head { display: grid; gap: 6px; margin-bottom: 22px; }
+.part-head .eyebrow { margin: 0; color: var(--accent); }
+.part-head p { margin: 0; color: var(--muted); max-width: 60ch; }
+.qs { display: grid; gap: 26px; }
+.q { display: grid; gap: 8px; min-width: 0; }
+.q-label { font-weight: 600; margin: 0; }
+.q-hint, .hint { margin: -4px 0 0; font-size: 14px; color: var(--muted); }
+.hint { margin: 0; }
+.hint.warn, .err { color: var(--warn); }
+.err { font-size: 14px; margin: 0; }
+.q-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 480px) { .q-row { grid-template-columns: 1fr; } }
+input[type="text"], input[type="number"], input[type="date"], select, textarea {
+  width: 100%; font: inherit; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 8px; padding: 11px 12px; min-height: 46px;
+}
+textarea { min-height: 88px; resize: vertical; }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent); }
+.unit { position: relative; }
+.unit input { padding-right: 64px; }
+.unit span { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; pointer-events: none; }
+.seg { display: flex; flex-wrap: wrap; gap: 8px; }
+.seg input, .phases input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.seg label { padding: 9px 15px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); cursor: pointer; font-size: 15px; user-select: none; }
+.seg label:hover { border-color: var(--accent); }
+.seg input:checked + label { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.seg input:focus-visible + label, .phases input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 2px; }
+.phases { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .phases { grid-template-columns: 1fr; } }
+.phases label { display: grid; gap: 2px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); cursor: pointer; height: 100%; }
+.phases label:hover { border-color: var(--accent); }
+.phases b { font-family: var(--font-display); font-weight: 600; }
+.phases small { color: var(--muted); font-size: 13.5px; line-height: 1.4; }
+.phases input:checked + label { border-color: var(--accent); background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); }
+details.ref { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+details.ref summary { cursor: pointer; padding: 11px 14px; font-weight: 600; font-size: 15px; }
+details.ref dl { margin: 0; padding: 0 14px 12px; display: grid; gap: 10px; }
+details.ref dt { font-weight: 600; font-size: 14px; }
+details.ref dd { margin: 0; color: var(--muted); font-size: 14px; }
+
+/* Rating */
+.rate-box { display: grid; gap: 20px; }
+.rate-total { display: grid; gap: 8px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 58px); z-index: 2; background: var(--paper); padding-block: 10px; }
+.stack { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--line); }
+.stack i { display: block; height: 100%; transition: width .12s linear; }
+.rate-sum { font-size: 14px; font-weight: 600; margin: 0; }
+.rate-sum.ok { color: var(--ok); }
+.rate-sum.warn { color: var(--warn); }
+.rate-list { display: grid; gap: 4px; }
+.rate-row { display: grid; gap: 6px; padding-block: 12px; border-bottom: 1px solid var(--line); }
+.rate-head { display: flex; align-items: center; gap: 10px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.rate-name { font-weight: 600; flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.rate-val { font-family: var(--font-display); font-weight: 700; font-size: 20px; font-variant-numeric: tabular-nums; min-width: 2.4em; text-align: right; }
+.rate-val small { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: var(--muted); margin-left: 2px; }
+.chip { font: inherit; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--accent); background: var(--surface); color: var(--accent); cursor: pointer; white-space: nowrap; }
+.chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+input[type="range"] { width: 100%; accent-color: var(--accent); height: 30px; margin: 0; cursor: pointer; }
+.rate-why { font-size: 15px !important; min-height: 40px !important; padding: 8px 11px !important; }
+.rate-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+/* Send panel */
+section.send { margin-block: 44px 24px; padding: 22px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); display: grid; gap: 14px; scroll-margin-top: 70px; }
+section.send p { margin: 0; }
+.status { font-size: 14px; color: var(--muted); }
+.status.open { color: var(--warn); }
+.status.full { color: var(--ok); }
+#out { font-family: var(--font-mono); font-size: 13px; line-height: 1.5; min-height: 260px; background: var(--paper); white-space: pre-wrap; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: inherit; font-weight: 600; font-size: 15px; padding: 11px 18px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; text-decoration: none; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn:hover { filter: brightness(1.06); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn[aria-disabled="true"] { opacity: .45; cursor: not-allowed; filter: none; }
+.note { font-size: 13px; color: var(--muted); }
+.foot { font-size: 14px; color: var(--muted); padding-block: 8px 48px; }
+@media (prefers-reduced-motion: reduce) { .pp-bar i, .stack i, .track, .track::after { transition: none; } }
+</style>
+</head>
+<body>
+
+<!-- ============ SETUP VIEW ============ -->
+<div id="setupView" hidden>
+  <header class="intro">
+    <div class="wrap">
+      <p class="eyebrow">Soft Skills · WiSe 26/27</p>
+      <h1>Teamcheck für eure Gruppe</h1>
+      <p class="lead">Hier richtest du den Fragebogen für deine Gruppe ein. Du bekommst einen eigenen Link, den du in eure Gruppe schickst. Die Antworten kommen per WhatsApp bei dir an.</p>
+      <ol class="steps">
+        <li>Gruppe und Namen eintragen</li>
+        <li>Link in die WhatsApp-Gruppe schicken</li>
+        <li>Antworten der anderen per WhatsApp sammeln</li>
+      </ol>
+    </div>
+  </header>
+  <main class="wrap">
+    <form id="setupForm" class="setup-form" novalidate>
+      <div class="q">
+        <label class="q-label" for="su_team">Teamname</label>
+        <p class="q-hint">So wie bei Moodle, z. B. BWLA6</p>
+        <input id="su_team" type="text" maxlength="60" autocomplete="off">
+      </div>
+      <div class="q">
+        <label class="q-label" for="su_me">Dein Name</label>
+        <p class="q-hint">An dich gehen die Antworten.</p>
+        <input id="su_me" type="text" maxlength="60" autocomplete="name">
+      </div>
+      <div class="q">
+        <label class="q-label" for="su_others">Die anderen Mitglieder</label>
+        <p class="q-hint">Ein Name pro Zeile, Vor- und Nachname</p>
+        <textarea id="su_others" rows="6"></textarea>
+        <p class="hint" id="su_info" role="status"></p>
+      </div>
+      <div class="q-row">
+        <div class="q">
+          <label class="q-label" for="su_reply">Ausfüllen bis</label>
+          <p class="q-hint">freiwillig</p>
+          <input id="su_reply" type="date">
+        </div>
+        <div class="q">
+          <label class="q-label" for="su_start">Start der Bearbeitung</label>
+          <p class="q-hint">freiwillig</p>
+          <input id="su_start" type="date">
+        </div>
+      </div>
+      <div class="q">
+        <label class="q-label" for="su_due">Einzelteile fertig bis</label>
+        <p class="q-hint">Puffer vor der Abgabe am 15.01.2027, damit jemand alles zusammenführen kann</p>
+        <input id="su_due" type="date" value="2027-01-08">
+      </div>
+      <label class="switch" for="su_rating">
+        <input type="checkbox" id="su_rating" checked>
+        <span class="track"></span>
+        <span class="sw-text"><b>Gegenseitige Bewertung</b><small>Jeder verteilt 100 Punkte auf die anderen, je nachdem, wie viel sie beigetragen haben.</small></span>
+      </label>
+      <p class="err" id="su_err" hidden></p>
+      <div><button class="btn primary" type="submit" id="su_make">Gruppen-Link erstellen</button></div>
+    </form>
+
+    <div class="result" id="su_result" hidden>
+      <h2>Euer Gruppen-Link</h2>
+      <p>Schick diesen Link in eure Gruppe. Wer ihn öffnet, sieht direkt euren Fragebogen mit euren Namen.</p>
+      <p class="hint warn" id="su_local" hidden>Du hast die Datei gerade lokal geöffnet. Der Link funktioniert für die anderen erst, wenn die Seite online liegt (z. B. auf GitHub Pages).</p>
+      <label for="su_link" class="q-hint" style="margin:0">Link</label>
+      <input id="su_link" type="text" readonly>
+      <div class="actions">
+        <a class="btn primary" id="su_wa" href="#" target="_blank" rel="noopener">In WhatsApp teilen</a>
+        <button class="btn" id="su_copy" type="button">Link kopieren</button>
+        <a class="btn" id="su_open" href="#">Fragebogen ansehen</a>
+      </div>
+      <p class="note" id="su_note" role="status"></p>
+    </div>
+    <p class="privacy">Die Namen stehen nur im Link. Die Seite speichert nichts auf einem Server. Eingaben bleiben als Entwurf nur auf dem Gerät, auf dem sie gemacht wurden.</p>
+  </main>
+</div>
+
+<!-- ============ FORM VIEW ============ -->
+<div id="formView" hidden>
+  <header class="intro">
+    <div class="wrap">
+      <p class="eyebrow" id="f_eyebrow"></p>
+      <h1>Teamcheck Teilprüfung 2</h1>
+      <p class="lead" id="f_lead"></p>
+      <ul class="facts" id="f_facts"></ul>
+    </div>
+  </header>
+
+  <nav class="progress" aria-label="Fortschritt">
+    <div class="wrap" id="progressGrid">
+      <a class="pp" href="#teil1" data-part="1" id="pp1"><span class="pp-top"><span class="pp-name">Rückblick</span><span class="pp-count">0/6</span></span><span class="pp-bar"><i></i></span></a>
+      <a class="pp" href="#teil2" data-part="2" id="pp2"><span class="pp-top"><span class="pp-name">Planung</span><span class="pp-count">0/7</span></span><span class="pp-bar"><i></i></span></a>
+      <a class="pp" href="#teil3" data-part="3" id="pp3"><span class="pp-top"><span class="pp-name">Reflexion</span><span class="pp-count">0/7</span></span><span class="pp-bar"><i></i></span></a>
+      <a class="pp" href="#teil4" data-part="4" id="pp4" hidden><span class="pp-top"><span class="pp-name">Bewertung</span><span class="pp-count">0/1</span></span><span class="pp-bar"><i></i></span></a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <form id="form" novalidate>
+      <div class="who">
+        <div class="q">
+          <label class="q-label" for="name">Wer bist du?</label>
+          <select id="name"></select>
+          <p class="err" id="nameErr" hidden></p>
+        </div>
+      </div>
+
+      <section class="part" id="teil1">
+        <div class="part-head">
+          <p class="eyebrow">Teil 1</p>
+          <h2>Rückblick auf Teilprüfung 1</h2>
+          <p>Was hast du zur ersten Präsentation beigetragen? Trag nur ein, was man nachprüfen kann. Schätzungen sind okay.</p>
+        </div>
+        <div class="qs">
+          <div class="q">
+            <label class="q-label" for="a_aufgabe">Was war deine Aufgabe in TP1?</label>
+            <p class="q-hint">z. B. Folien zur Ausgangssituation, Recherche, Vortragsteil</p>
+            <input id="a_aufgabe" type="text" autocomplete="off">
+          </div>
+          <div class="q">
+            <label class="q-label" for="a_geliefert">Was hast du konkret geliefert?</label>
+            <p class="q-hint">Folien, Texte, Quellen, Notizen. Am besten mit Datei- oder Foliennamen.</p>
+            <textarea id="a_geliefert"></textarea>
+          </div>
+          <div class="q-row">
+            <div class="q">
+              <label class="q-label" for="a_folien">Folien von dir</label>
+              <div class="unit"><input id="a_folien" type="number" min="0" step="1" inputmode="numeric"><span>Folien</span></div>
+            </div>
+            <div class="q">
+              <label class="q-label" for="a_stunden">Zeitaufwand gesamt</label>
+              <div class="unit"><input id="a_stunden" type="number" min="0" step="0.5" inputmode="decimal"><span>Std.</span></div>
+            </div>
+          </div>
+          <div class="q" role="group" aria-labelledby="l_a_quellen">
+            <p class="q-label" id="l_a_quellen">Hast du eigene Quellen recherchiert?</p>
+            <div class="seg">
+              <input type="radio" name="a_quellen" id="a_quellen_1" value="Ja"><label for="a_quellen_1">Ja</label>
+              <input type="radio" name="a_quellen" id="a_quellen_2" value="Teilweise"><label for="a_quellen_2">Teilweise</label>
+              <input type="radio" name="a_quellen" id="a_quellen_3" value="Nein"><label for="a_quellen_3">Nein</label>
+            </div>
+          </div>
+          <div class="q" role="group" aria-labelledby="l_a_nach">
+            <p class="q-label" id="l_a_nach">Musste jemand deinen Teil überarbeiten?</p>
+            <div class="seg">
+              <input type="radio" name="a_nach" id="a_nach_1" value="Nein"><label for="a_nach_1">Nein</label>
+              <input type="radio" name="a_nach" id="a_nach_2" value="Ja, etwas"><label for="a_nach_2">Ja, etwas</label>
+              <input type="radio" name="a_nach" id="a_nach_3" value="Ja, stark"><label for="a_nach_3">Ja, stark</label>
+              <input type="radio" name="a_nach" id="a_nach_4" value="Weiß ich nicht"><label for="a_nach_4">Weiß ich nicht</label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="part" id="teil2">
+        <div class="part-head">
+          <p class="eyebrow">Teil 2</p>
+          <h2>Planung für Teilprüfung 2</h2>
+          <p id="t2_text"></p>
+        </div>
+        <div class="qs">
+          <div class="q" role="group" aria-labelledby="l_b_zeit">
+            <p class="q-label" id="l_b_zeit">Wie viel Zeit hast du pro Woche für das Projekt?</p>
+            <div class="seg">
+              <input type="radio" name="b_zeit" id="b_zeit_1" value="unter 2 Std."><label for="b_zeit_1">unter 2 Std.</label>
+              <input type="radio" name="b_zeit" id="b_zeit_2" value="2–4 Std."><label for="b_zeit_2">2–4 Std.</label>
+              <input type="radio" name="b_zeit" id="b_zeit_3" value="4–6 Std."><label for="b_zeit_3">4–6 Std.</label>
+              <input type="radio" name="b_zeit" id="b_zeit_4" value="über 6 Std."><label for="b_zeit_4">über 6 Std.</label>
+            </div>
+          </div>
+          <div class="q">
+            <label class="q-label" for="b_weg">Wann bist du nicht erreichbar?</label>
+            <p class="q-hint">z. B. 23.12.–28.12. bei Familie, oder „immer erreichbar“</p>
+            <input id="b_weg" type="text" autocomplete="off">
+          </div>
+          <div class="q">
+            <p class="q-label">Welche Perspektive möchtest du übernehmen?</p>
+            <p class="q-hint" id="fp_hint"></p>
+            <div class="q-row">
+              <div class="q">
+                <label for="b_fp1" class="q-hint" style="margin:0">1. Wunsch</label>
+                <select id="b_fp1"></select>
+              </div>
+              <div class="q">
+                <label for="b_fp2" class="q-hint" style="margin:0">2. Wunsch</label>
+                <select id="b_fp2"></select>
+              </div>
+            </div>
+            <details class="ref">
+              <summary>Was steckt in den Perspektiven?</summary>
+              <dl id="fpList"></dl>
+            </details>
+          </div>
+          <div class="q">
+            <label class="q-label" for="b_staerken">Was kannst du besonders gut?</label>
+            <p class="q-hint">z. B. recherchieren, Texte schreiben, Folien gestalten, vortragen, Modelle erklären</p>
+            <textarea id="b_staerken"></textarea>
+          </div>
+          <div class="q">
+            <label class="q-label" for="b_hilfe">Wobei brauchst du Unterstützung?</label>
+            <textarea id="b_hilfe"></textarea>
+          </div>
+          <div class="q" role="group" aria-labelledby="l_b_termin">
+            <p class="q-label" id="l_b_termin"></p>
+            <p class="q-hint" id="h_b_termin"></p>
+            <div class="seg">
+              <input type="radio" name="b_termin" id="b_termin_1" value="Ja"><label for="b_termin_1">Ja</label>
+              <input type="radio" name="b_termin" id="b_termin_2" value="Unsicher"><label for="b_termin_2">Unsicher</label>
+              <input type="radio" name="b_termin" id="b_termin_3" value="Nein"><label for="b_termin_3">Nein</label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="part" id="teil3">
+        <div class="part-head">
+          <p class="eyebrow">Teil 3</p>
+          <h2>Reflexion der Zusammenarbeit</h2>
+          <p id="t3_text"></p>
+        </div>
+        <div class="qs">
+          <div class="q" role="group" aria-labelledby="l_c_phase">
+            <p class="q-label" id="l_c_phase">In welcher Phase war euer Team bei TP1?</p>
+            <p class="q-hint">Phasenmodell nach Tuckman</p>
+            <div class="phases">
+              <input type="radio" name="c_phase" id="c_phase_1" value="Forming"><label for="c_phase_1"><b>Forming</b><small>Kennenlernen, Rollen unklar, alle eher vorsichtig</small></label>
+              <input type="radio" name="c_phase" id="c_phase_2" value="Storming"><label for="c_phase_2"><b>Storming</b><small>Reibung, unterschiedliche Vorstellungen, Konflikte um Rollen</small></label>
+              <input type="radio" name="c_phase" id="c_phase_3" value="Norming"><label for="c_phase_3"><b>Norming</b><small>Absprachen und Regeln setzen sich durch, Zusammenhalt wächst</small></label>
+              <input type="radio" name="c_phase" id="c_phase_4" value="Performing"><label for="c_phase_4"><b>Performing</b><small>Eingespielt, jeder weiß, was zu tun ist</small></label>
+            </div>
+          </div>
+          <div class="q">
+            <label class="q-label" for="c_beleg">Woran machst du das fest?</label>
+            <p class="q-hint">Eine konkrete Situation, z. B. aus einem Meeting oder dem Gruppenchat</p>
+            <textarea id="c_beleg"></textarea>
+          </div>
+          <div class="q">
+            <label class="q-label" for="c_rolle">Welche Rolle hattest du im Team?</label>
+            <p class="q-hint">z. B. Organisator, Ideengeber, Umsetzer, Rechercheur, Prüfer, eher im Hintergrund</p>
+            <input id="c_rolle" type="text" autocomplete="off">
+          </div>
+          <div class="q">
+            <label class="q-label" for="c_gut">Was lief in der Zusammenarbeit gut?</label>
+            <textarea id="c_gut"></textarea>
+          </div>
+          <div class="q">
+            <label class="q-label" for="c_schlecht">Was lief nicht gut?</label>
+            <textarea id="c_schlecht"></textarea>
+          </div>
+          <div class="q">
+            <label class="q-label" for="c_anders">Was machst du bei TP2 anders?</label>
+            <textarea id="c_anders"></textarea>
+          </div>
+          <div class="q">
+            <label class="q-label" for="c_brauche">Was brauchst du vom Team?</label>
+            <textarea id="c_brauche"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section class="part" id="teil4" hidden>
+        <div class="part-head">
+          <p class="eyebrow">Teil 4</p>
+          <h2>Bewertung der anderen</h2>
+          <p>Du hast 100 Punkte. Verteile sie danach, wie viel jede Person zum Projekt beigetragen hat. Am Anfang bekommen alle gleich viel. Stellst du bei jemandem einen Wert ein, bleibt der fest und der Rest verteilt sich gleichmäßig auf die anderen.</p>
+        </div>
+        <p class="hint" id="rateEmpty">Wähle oben deinen Namen. Dann erscheinen hier die anderen Mitglieder.</p>
+        <div class="rate-box" id="rateBox" hidden>
+          <div class="rate-total">
+            <div class="stack" id="rateStack" aria-hidden="true"></div>
+            <p class="rate-sum" id="rateSum" role="status"></p>
+          </div>
+          <div class="rate-list" id="rateList"></div>
+          <div class="rate-actions">
+            <button class="btn" type="button" id="rateEqual">Alle haben gleich viel beigetragen</button>
+          </div>
+        </div>
+      </section>
+    </form>
+
+    <section class="send" id="senden" aria-labelledby="h_send">
+      <h2 id="h_send"></h2>
+      <p class="status" id="status" role="status"></p>
+      <label for="out" class="q-hint" style="margin:0">So kommt deine Antwort an</label>
+      <textarea id="out" readonly></textarea>
+      <div class="actions">
+        <a class="btn primary" id="wa" href="#" target="_blank" rel="noopener">In WhatsApp öffnen</a>
+        <button class="btn" id="copy" type="button">Text kopieren</button>
+      </div>
+      <p class="note" id="copyNote" role="status"></p>
+      <p class="note">Deine Eingaben werden als Entwurf nur auf diesem Gerät zwischengespeichert. Niemand sonst sieht sie, bis du den Text abschickst.</p>
+    </section>
+    <p class="foot">Andere Gruppe? <a id="f_new" href="#">Eigenen Teamcheck einrichten</a></p>
+  </main>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var TP2_DUE = '15.01.2027';
+  var FP_ALL = [
+    ['FP1 · Personen & Kontext', 'Alle Beteiligten, Rollen, Beziehungen und die Kommunikationskultur. Dazu, was seit TP1 neu dazugekommen ist.'],
+    ['FP2 · Ausgangssituation', 'Situation, Vorgeschichte, Sach- oder Beziehungsebene (2. Axiom nach Watzlawick). Belegt mit Zitaten und beobachtetem Verhalten.'],
+    ['FP3 · Weitere Modelle', 'Mindestens ein Modell aus der zweiten Semesterhälfte anwenden, z. B. Bias, Missverständnisse oder Konfliktdynamik.'],
+    ['FP4 · Lösung', 'Alle Erkenntnisse bündeln und eine Lösung mit einem Kommunikationsmodell entwickeln, wörtlich als Skript ausformuliert.'],
+    ['FP5 · Kritische Prüfung', 'Ressourcen, Vorteile und Grenzen der Lösung. Warum die Beteiligten sie annehmen würden.'],
+    ['FP6 · Teamentwicklung', 'Wie sich eure Gruppe im Semester entwickelt hat, anhand eines Modells zur Gruppenentwicklung.'],
+    ['FP7 · Beiträge & Rollen', 'Eure Zusammenarbeit anhand eines Modells reflektieren und Verbesserungen mit Beispielen belegen.']
+  ];
+  var FP_EXTRA = ['FP2+ · Zusatzanalyse', 'Eine weitere Analyse der Ausgangssituation mit einem zusätzlichen Kommunikationsmodell. Gibt es nur bei Teams mit mehr als 7 Personen.'];
+
+  function $(id) { return document.getElementById(id); }
+  function clean(s, max) {
+    return String(s == null ? '' : s).replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max || 60);
+  }
+  function isoOk(s) { return /^\d{4}-\d{2}-\d{2}$/.test(s || '') ? s : ''; }
+  function de(iso) { if (!iso) return ''; var a = iso.split('-'); return a[2] + '.' + a[1] + '.' + a[0]; }
+  function uniq(arr) {
+    var seen = {}, out = [];
+    arr.forEach(function (x) { var k = x.toLowerCase(); if (x && !seen[k]) { seen[k] = 1; out.push(x); } });
+    return out;
+  }
+  function baseUrl() { return location.href.split('#')[0].split('?')[0]; }
+  function fpList(n) {
+    if (n >= 7) { var l = FP_ALL.slice(); if (n > 7) l.push(FP_EXTRA); return l; }
+    return FP_ALL.slice(0, Math.max(5, n));
+  }
+  function store(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+  function load(key) { try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) { return null; } }
+
+  function copyText(text, field, note, okMsg) {
+    function fallback() {
+      try { field.focus(); field.select(); field.setSelectionRange(0, text.length); } catch (e) {}
+      var ok = false;
+      try { ok = document.execCommand && document.execCommand('copy'); } catch (e) { ok = false; }
+      note.textContent = ok ? okMsg : 'Text ist markiert. Kopiere ihn mit Strg+C oder lange drücken und „Kopieren“.';
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { note.textContent = okMsg; }, fallback);
+      } else { fallback(); }
+    } catch (e) { fallback(); }
+  }
+
+  /* ---------- Config from link ---------- */
+  function parseConfig() {
+    var src = location.hash.replace(/^#/, '');
+    if (src.indexOf('=') === -1 && location.search) src = location.search.replace(/^\?/, '');
+    if (src.indexOf('=') === -1) return null;
+    var p;
+    try { p = new URLSearchParams(src); } catch (e) { return null; }
+    var team = clean(p.get('t')), rec = clean(p.get('r'));
+    var members = uniq(p.getAll('m').map(function (x) { return clean(x); }));
+    if (rec && !members.some(function (m) { return m.toLowerCase() === rec.toLowerCase(); })) members.unshift(rec);
+    members = members.slice(0, 15);
+    if (!team || !rec || members.length < 2) return null;
+    return {
+      team: team, rec: rec, members: members,
+      due: isoOk(p.get('d')), start: isoOk(p.get('s')), reply: isoOk(p.get('f')),
+      rating: p.get('b') === '1'
+    };
+  }
+
+  /* ---------- Setup view ---------- */
+  var SETUP_KEY = 'teamcheck:setup';
+  function setupMembers() {
+    var me = clean($('su_me').value);
+    var others = $('su_others').value.split(/[\n,;]+/).map(function (x) { return clean(x); }).filter(Boolean);
+    return { me: me, all: uniq([me].concat(others).filter(Boolean)) };
+  }
+  function setupInfo() {
+    var m = setupMembers(), n = m.all.length, el = $('su_info');
+    var txt;
+    if (n < 2) { txt = 'Trag dich und mindestens eine weitere Person ein.'; }
+    else if (n < 5) { txt = n + ' Personen inklusive dir. Laut Aufgabenstellung müsst ihr bei weniger als 5 Personen selbst die Lehrperson kontaktieren.'; }
+    else if (n < 7) { txt = n + ' Personen inklusive dir. Ihr bearbeitet ' + n + ' Perspektiven (FP1 bis FP' + n + ').'; }
+    else if (n === 7) { txt = '7 Personen inklusive dir. Ihr bearbeitet alle 7 Perspektiven.'; }
+    else { txt = n + ' Personen inklusive dir. Ihr bearbeitet alle 7 Perspektiven, dazu ' + (n - 7) + ' Zusatzanalyse' + (n - 7 === 1 ? '' : 'n') + ' zur Ausgangssituation.'; }
+    el.textContent = txt;
+    el.className = (n >= 2 && n < 5) ? 'hint warn' : 'hint';
+  }
+  function saveSetup() {
+    store(SETUP_KEY, {
+      team: $('su_team').value, me: $('su_me').value, others: $('su_others').value,
+      reply: $('su_reply').value, start: $('su_start').value, due: $('su_due').value, rating: $('su_rating').checked
+    });
+  }
+  function restoreSetup() {
+    var d = load(SETUP_KEY);
+    if (!d || typeof d !== 'object') return;
+    ['team', 'me', 'others', 'reply', 'start', 'due'].forEach(function (k) {
+      if (typeof d[k] === 'string' && d[k]) $('su_' + k).value = d[k];
+    });
+    if (typeof d.rating === 'boolean') $('su_rating').checked = d.rating;
+  }
+  function buildLink(e) {
+    if (e) e.preventDefault();
+    var m = setupMembers(), team = clean($('su_team').value), errs = [];
+    if (!team) errs.push('Teamname fehlt.');
+    if (!m.me) errs.push('Dein Name fehlt.');
+    if (m.all.length < 2) errs.push('Trag mindestens eine weitere Person ein.');
+    if (errs.length) { $('su_err').textContent = errs.join(' '); $('su_err').hidden = false; $('su_result').hidden = true; return; }
+    $('su_err').hidden = true;
+    var p = new URLSearchParams();
+    p.set('t', team); p.set('r', m.me);
+    m.all.forEach(function (x) { p.append('m', x); });
+    var d = isoOk($('su_due').value), s = isoOk($('su_start').value), f = isoOk($('su_reply').value);
+    if (d) p.set('d', d);
+    if (s) p.set('s', s);
+    if (f) p.set('f', f);
+    p.set('b', $('su_rating').checked ? '1' : '0');
+    var link = baseUrl() + '#' + p.toString();
+    $('su_link').value = link;
+    $('su_open').href = link;
+    var msg = 'Hi! Bitte füllt den Teamcheck für TP2 aus, dauert ca. 10 Minuten' + (f ? ' (bis ' + de(f) + ')' : '') + '. Am Ende schickt ihr mir eure Antwort per WhatsApp: ' + link;
+    $('su_wa').href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+    $('su_local').hidden = location.protocol !== 'file:';
+    $('su_note').textContent = '';
+    $('su_result').hidden = false;
+    saveSetup();
+    $('su_result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  $('setupForm').addEventListener('submit', buildLink);
+  $('setupForm').addEventListener('input', function () { setupInfo(); saveSetup(); $('su_result').hidden = true; });
+  $('setupForm').addEventListener('change', function () { saveSetup(); });
+  $('su_copy').addEventListener('click', function () {
+    copyText($('su_link').value, $('su_link'), $('su_note'), 'Link kopiert. Jetzt in eure WhatsApp-Gruppe einfügen.');
+  });
+
+  function showSetup() {
+    cfg = null;
+    $('formView').hidden = true;
+    $('setupView').hidden = false;
+    document.title = 'Teamcheck TP2 einrichten';
+    restoreSetup();
+    setupInfo();
+  }
+
+  /* ---------- Questionnaire view ---------- */
+  var cfg = null;
+  var Q = [
+    { id: 'a_aufgabe', p: 1, t: 'text', l: 'Aufgabe' },
+    { id: 'a_geliefert', p: 1, t: 'text', l: 'Geliefert' },
+    { id: 'a_folien', p: 1, t: 'text', l: 'Folien von mir', u: '' },
+    { id: 'a_stunden', p: 1, t: 'text', l: 'Aufwand', u: ' Std.' },
+    { id: 'a_quellen', p: 1, t: 'radio', l: 'Eigene Quellen' },
+    { id: 'a_nach', p: 1, t: 'radio', l: 'Von anderen überarbeitet' },
+    { id: 'b_zeit', p: 2, t: 'radio', l: 'Zeit pro Woche' },
+    { id: 'b_weg', p: 2, t: 'text', l: 'Nicht erreichbar' },
+    { id: 'b_fp1', p: 2, t: 'text', l: 'Wunsch-Perspektive 1' },
+    { id: 'b_fp2', p: 2, t: 'text', l: 'Wunsch-Perspektive 2' },
+    { id: 'b_staerken', p: 2, t: 'text', l: 'Stärken' },
+    { id: 'b_hilfe', p: 2, t: 'text', l: 'Brauche Unterstützung bei' },
+    { id: 'b_termin', p: 2, t: 'radio', l: 'Teil rechtzeitig fertig' },
+    { id: 'c_phase', p: 3, t: 'radio', l: 'Teamphase bei TP1' },
+    { id: 'c_beleg', p: 3, t: 'text', l: 'Woran ich das festmache' },
+    { id: 'c_rolle', p: 3, t: 'text', l: 'Meine Rolle' },
+    { id: 'c_gut', p: 3, t: 'text', l: 'Lief gut' },
+    { id: 'c_schlecht', p: 3, t: 'text', l: 'Lief nicht gut' },
+    { id: 'c_anders', p: 3, t: 'text', l: 'Mache ich bei TP2 anders' },
+    { id: 'c_brauche', p: 3, t: 'text', l: 'Brauche ich vom Team' }
+  ];
+  var rs = { me: '', others: [], val: {}, fixed: {}, why: {}, confirmed: false };
+  var out = $('out'), wa = $('wa'), copyBtn = $('copy'), statusEl = $('status'), copyNote = $('copyNote');
+
+  function val(q) {
+    if (q.t === 'radio') {
+      var c = document.querySelector('input[name="' + q.id + '"]:checked');
+      return c ? c.value : '';
+    }
+    var el = $(q.id);
+    return el ? String(el.value || '').trim() : '';
+  }
+  function nameVal() { return $('name').value; }
+  function draftKey() { return 'teamcheck:' + cfg.team + '|' + cfg.rec; }
+  function n() { return cfg.members.length; }
+  function reflectInfo() {
+    var k = n();
+    if (k >= 7) return { short: 'FP6 + FP7', long: 'Perspektive 6 (Teamentwicklung) und Perspektive 7 (Beiträge und Rollen)', head: 'Perspektive 6 und 7' };
+    if (k === 6) return { short: 'FP6', long: 'Perspektive 6 (Teamentwicklung)', head: 'Perspektive 6' };
+    return null;
+  }
+  function dueText() { return cfg.due ? 'bis ' + de(cfg.due) : 'rechtzeitig vor der Abgabe'; }
+
+  function fillSelect(sel, opts, placeholder) {
+    sel.innerHTML = '';
+    var o = document.createElement('option'); o.value = ''; o.textContent = placeholder; sel.appendChild(o);
+    opts.forEach(function (v) { var op = document.createElement('option'); op.value = v; op.textContent = v; sel.appendChild(op); });
+  }
+
+  function showForm(c) {
+    cfg = c;
+    $('setupView').hidden = true;
+    $('formView').hidden = false;
+    document.title = 'Teamcheck TP2 · ' + c.team;
+    var ri = reflectInfo(), fps = fpList(n());
+
+    $('f_eyebrow').textContent = 'Soft Skills · WiSe 26/27 · Team ' + c.team;
+    $('f_lead').textContent = 'Mit deinen Antworten verteilt ihr die Perspektiven für TP2.' +
+      (ri ? ' Außerdem sind sie das Material für ' + ri.long + '.' : '') +
+      (c.rating ? ' Dazu verteilst du Punkte dafür, wie viel die anderen beigetragen haben.' : '') +
+      ' Die Umfrage ist nicht anonym, weil die Präsentation konkrete Belege braucht. Am Ende schickst du deinen Text per WhatsApp an ' + c.rec + '.';
+
+    var facts = $('f_facts'); facts.innerHTML = '';
+    function fact(label, value) {
+      var li = document.createElement('li'); li.appendChild(document.createTextNode(label + ' '));
+      var b = document.createElement('b'); b.textContent = value; li.appendChild(b); facts.appendChild(li);
+    }
+    fact('Dauer', 'ca. 10 Min.');
+    if (c.reply) fact('Ausfüllen bis', de(c.reply));
+    fact('TP2-Abgabe', TP2_DUE);
+
+    fillSelect($('name'), c.members, 'Bitte Namen wählen');
+    $('nameErr').textContent = 'Wähle zuerst deinen Namen, sonst kann ' + c.rec + ' die Antwort nicht zuordnen.';
+    $('nameErr').hidden = true;
+
+    var fpNames = fps.map(function (f) { return f[0]; });
+    fillSelect($('b_fp1'), fpNames, 'Bitte wählen');
+    fillSelect($('b_fp2'), fpNames, 'Bitte wählen');
+    var dl = $('fpList'); dl.innerHTML = '';
+    fps.forEach(function (f) {
+      var dt = document.createElement('dt'); dt.textContent = f[0];
+      var dd = document.createElement('dd'); dd.textContent = f[1];
+      dl.appendChild(dt); dl.appendChild(dd);
+    });
+    $('fp_hint').textContent = n() < 5
+      ? 'Laut Aufgabenstellung sind FP1 bis FP5 Pflicht. Gib zwei Wünsche an.'
+      : 'Bei ' + n() + ' Personen gibt es ' + (n() > 7 ? '7 Perspektiven plus Zusatzanalysen' : fps.length + ' Perspektiven') + '. Jede Person übernimmt eine. Gib zwei Wünsche an, damit ihr fair verteilen könnt.';
+
+    $('t2_text').textContent = (c.start ? 'Ihr arbeitet vom ' + de(c.start) + ' bis zur Abgabe am ' + TP2_DUE + '.' : 'Die Abgabe ist am ' + TP2_DUE + '.') +
+      ' Dazwischen liegen Weihnachten und Silvester, deshalb geht es um deine echte Zeit.';
+    $('l_b_termin').textContent = 'Schaffst du deinen Teil ' + dueText() + '?';
+    $('h_b_termin').textContent = 'Puffer vor der Abgabe, damit ' + c.rec + ' alles zusammenführen kann.';
+    $('t3_text').textContent = ri
+      ? 'Diese Antworten gehen direkt in ' + ri.head + '. Ohne Beispiel könnt ihr eine Aussage in der Präsentation nicht verwenden. Schreib deshalb immer dazu, woran du es festmachst.'
+      : 'Damit seht ihr, wo es in der Zusammenarbeit hakt. Schreib immer ein konkretes Beispiel dazu.';
+    $('h_send').textContent = 'Antwort an ' + c.rec + ' schicken';
+    $('f_new').href = baseUrl();
+
+    $('teil4').hidden = !c.rating;
+    $('pp4').hidden = !c.rating;
+    $('progressGrid').style.gridTemplateColumns = 'repeat(' + (c.rating ? 4 : 3) + ', minmax(0, 1fr))';
+
+    $('form').reset();
+    rs = { me: '', others: [], val: {}, fixed: {}, why: {}, confirmed: false };
+    var draft = restoreDraft();
+    if (draft && draft.rating && draft.rating.me && draft.rating.me === nameVal()) {
+      var r = draft.rating;
+      rs = { me: r.me, others: [], val: r.val || {}, fixed: r.fixed || {}, why: r.why || {}, confirmed: !!r.confirmed };
+      buildRating(true);
+    } else {
+      buildRating(false);
+    }
+    update();
+    window.scrollTo(0, 0);
+  }
+
+  /* ----- Rating ----- */
+  function rebalance() {
+    var free = rs.others.filter(function (o) { return !rs.fixed[o]; });
+    var fixedSum = 0;
+    rs.others.forEach(function (o) { if (rs.fixed[o]) fixedSum += (rs.val[o] || 0); });
+    if (!free.length) return;
+    var R = Math.max(0, 100 - fixedSum);
+    var base = Math.floor(R / free.length), extra = R - base * free.length;
+    free.forEach(function (o, i) { rs.val[o] = base + (i < extra ? 1 : 0); });
+  }
+  function total() { return rs.others.reduce(function (s, o) { return s + (rs.val[o] || 0); }, 0); }
+  function anyFixed() { return rs.others.some(function (o) { return rs.fixed[o]; }); }
+
+  function setPoints(name, v) {
+    var otherFixed = 0;
+    rs.others.forEach(function (o) { if (o !== name && rs.fixed[o]) otherFixed += (rs.val[o] || 0); });
+    var cap = Math.max(0, 100 - otherFixed);
+    rs.val[name] = Math.min(Math.max(0, Math.round(v)), cap);
+    rs.fixed[name] = true;
+    rs.confirmed = false;
+    rebalance();
+    paintRating();
+  }
+
+  function buildRating(keep) {
+    var list = $('rateList');
+    list.innerHTML = '';
+    if (!cfg || !cfg.rating) return;
+    var me = nameVal();
+    if (!me) { $('rateEmpty').hidden = false; $('rateBox').hidden = true; rs.others = []; rs.me = ''; return; }
+    $('rateEmpty').hidden = true; $('rateBox').hidden = false;
+    var others = cfg.members.filter(function (m) { return m !== me; });
+    if (!keep || rs.me !== me) {
+      rs = { me: me, others: others, val: {}, fixed: {}, why: {}, confirmed: false };
+    } else {
+      rs.others = others;
+      Object.keys(rs.fixed).forEach(function (k) { if (others.indexOf(k) === -1) delete rs.fixed[k]; });
+      if (total() > 100 || others.some(function (o) { return typeof rs.val[o] !== 'number'; })) { rs.fixed = {}; }
+    }
+    rebalance();
+    others.forEach(function (name, i) {
+      var row = document.createElement('div'); row.className = 'rate-row';
+      var head = document.createElement('div'); head.className = 'rate-head';
+      var dot = document.createElement('span'); dot.className = 'dot'; dot.style.background = 'var(--s' + ((i % 8) + 1) + ')';
+      var nm = document.createElement('span'); nm.className = 'rate-name'; nm.textContent = name;
+      var chip = document.createElement('button'); chip.type = 'button'; chip.className = 'chip'; chip.textContent = 'fest · lösen';
+      chip.setAttribute('aria-label', 'Punkte für ' + name + ' wieder automatisch verteilen');
+      var v = document.createElement('span'); v.className = 'rate-val';
+      var vNum = document.createElement('span'); var vUnit = document.createElement('small'); vUnit.textContent = 'P.';
+      v.appendChild(vNum); v.appendChild(vUnit);
+      head.appendChild(dot); head.appendChild(nm); head.appendChild(chip); head.appendChild(v);
+      var range = document.createElement('input');
+      range.type = 'range'; range.min = '0'; range.max = '100'; range.step = '1'; range.id = 'r_' + i;
+      range.setAttribute('aria-label', 'Punkte für ' + name);
+      var why = document.createElement('input');
+      why.type = 'text'; why.className = 'rate-why'; why.id = 'rw_' + i; why.maxLength = 200;
+      why.placeholder = 'Begründung (freiwillig)';
+      why.setAttribute('aria-label', 'Begründung für ' + name);
+      why.value = rs.why[name] || '';
+      range.addEventListener('input', function () { setPoints(name, +range.value); });
+      chip.addEventListener('click', function () { rs.fixed[name] = false; rebalance(); paintRating(); onChange(); });
+      why.addEventListener('input', function () { rs.why[name] = why.value; });
+      row.appendChild(head); row.appendChild(range); row.appendChild(why);
+      row._refs = { range: range, num: vNum, chip: chip };
+      list.appendChild(row);
+    });
+    paintRating();
+  }
+
+  function paintRating() {
+    var rows = $('rateList').children;
+    for (var i = 0; i < rows.length; i++) {
+      var name = rs.others[i], r = rows[i]._refs;
+      if (!r) continue;
+      if (+r.range.value !== rs.val[name]) r.range.value = String(rs.val[name]);
+      r.num.textContent = rs.val[name];
+      r.chip.hidden = !rs.fixed[name];
+    }
+    var st = $('rateStack'); st.innerHTML = '';
+    rs.others.forEach(function (o, i) {
+      var seg = document.createElement('i');
+      seg.style.width = (rs.val[o] || 0) + '%';
+      seg.style.background = 'var(--s' + ((i % 8) + 1) + ')';
+      st.appendChild(seg);
+    });
+    var t = total(), msg = $('rateSum');
+    if (t === 100) {
+      msg.textContent = rs.confirmed ? 'Verteilt: 100 von 100 Punkten. Alle gleich viel.' : 'Verteilt: 100 von 100 Punkten';
+      msg.className = 'rate-sum ok';
+    } else {
+      msg.textContent = 'Noch ' + (100 - t) + ' Punkte übrig. Gib sie jemandem oder tippe bei einer Person auf „lösen“.';
+      msg.className = 'rate-sum warn';
+    }
+  }
+
+  $('rateEqual').addEventListener('click', function () {
+    rs.fixed = {}; rs.confirmed = true; rebalance(); paintRating(); onChange();
+  });
+
+  /* ----- Output, progress, status ----- */
+  function partLabel(p) {
+    if (p === 1) return 'Rückblick Teilprüfung 1';
+    if (p === 2) return 'Planung Teilprüfung 2';
+    var ri = reflectInfo();
+    return ri ? 'Reflexion (für ' + ri.short + ')' : 'Reflexion';
+  }
+  function buildText() {
+    var who = nameVal() || '(Name fehlt)';
+    var lines = ['*Teamcheck TP2 – ' + who + '*', '_Soft Skills · Team ' + cfg.team + '_'];
+    [1, 2, 3].forEach(function (p) {
+      lines.push('', '*' + p + ' · ' + partLabel(p) + '*');
+      Q.filter(function (q) { return q.p === p; }).forEach(function (q) {
+        var v = val(q);
+        if (v && q.u !== undefined) v = v + q.u;
+        if (q.id === 'b_termin' && v) v = v + ' (' + dueText() + ')';
+        v = v ? v.replace(/\s*\n\s*/g, ' / ') : '–';
+        lines.push(q.l + ': ' + v);
+      });
+    });
+    if (cfg.rating) {
+      lines.push('', '*4 · Bewertung der anderen (100 Punkte)*');
+      if (!nameVal()) {
+        lines.push('–');
+      } else {
+        if (!anyFixed()) lines.push(rs.confirmed ? 'Alle haben gleich viel beigetragen.' : 'Nicht angepasst, Punkte gleich verteilt.');
+        rs.others.forEach(function (o) {
+          var why = clean(rs.why[o], 200);
+          lines.push(o + ': ' + (rs.val[o] || 0) + ' P.' + (why ? ' (' + why + ')' : ''));
+        });
+        lines.push('Summe: ' + total());
+      }
+    }
+    return lines.join('\n');
+  }
+
+  function rateOk() { return !cfg.rating || (!!nameVal() && total() === 100); }
+
+  function update() {
+    if (!cfg) return;
+    var counts = { 1: [0, 0], 2: [0, 0], 3: [0, 0] }, open = 0;
+    Q.forEach(function (q) {
+      counts[q.p][1]++;
+      if (val(q)) counts[q.p][0]++; else open++;
+    });
+    [1, 2, 3].forEach(function (p) {
+      var el = $('pp' + p), c = counts[p];
+      el.querySelector('.pp-count').textContent = c[0] + '/' + c[1];
+      el.querySelector('.pp-bar i').style.width = (c[1] ? (c[0] / c[1]) * 100 : 0) + '%';
+      el.classList.toggle('done', c[0] === c[1]);
+    });
+    if (cfg.rating) {
+      var done = !!nameVal() && total() === 100 && (rs.confirmed || anyFixed());
+      var el4 = $('pp4');
+      el4.querySelector('.pp-count').textContent = done ? '1/1' : '0/1';
+      el4.querySelector('.pp-bar i').style.width = done ? '100%' : '0%';
+      el4.classList.toggle('done', done);
+      if (!done) open++;
+    }
+
+    var text = buildText();
+    out.value = text;
+    var hasName = !!nameVal(), can = hasName && rateOk();
+    wa.href = can ? 'https://wa.me/?text=' + encodeURIComponent(text) : '#';
+    wa.setAttribute('aria-disabled', can ? 'false' : 'true');
+    copyBtn.setAttribute('aria-disabled', can ? 'false' : 'true');
+
+    statusEl.classList.remove('open', 'full');
+    if (!hasName) {
+      statusEl.textContent = 'Wähle oben deinen Namen, dann kannst du abschicken.';
+      statusEl.classList.add('open');
+    } else if (!rateOk()) {
+      statusEl.textContent = 'Bei der Bewertung sind noch nicht genau 100 Punkte verteilt.';
+      statusEl.classList.add('open');
+    } else if (open) {
+      statusEl.textContent = 'Noch ' + open + (open === 1 ? ' Frage' : ' Fragen') + ' offen. Du kannst trotzdem schicken, aber vollständige Antworten helfen mehr.';
+      statusEl.classList.add('open');
+    } else {
+      statusEl.textContent = 'Alles beantwortet. Danke!';
+      statusEl.classList.add('full');
+    }
+  }
+
+  /* ----- Draft ----- */
+  function saveDraft() {
+    if (!cfg) return;
+    var d = { name: nameVal(), rating: rs };
+    Q.forEach(function (q) { d[q.id] = val(q); });
+    store(draftKey(), d);
+  }
+  function restoreDraft() {
+    var d = load(draftKey());
+    if (!d || typeof d !== 'object') return null;
+    if (typeof d.name === 'string' && cfg.members.indexOf(d.name) !== -1) $('name').value = d.name;
+    Q.forEach(function (q) {
+      var v = d[q.id];
+      if (typeof v !== 'string' || !v) return;
+      if (q.t === 'radio') {
+        var inputs = document.querySelectorAll('input[name="' + q.id + '"]');
+        for (var i = 0; i < inputs.length; i++) if (inputs[i].value === v) inputs[i].checked = true;
+      } else {
+        var el = $(q.id);
+        if (el) el.value = v;
+      }
+    });
+    return d;
+  }
+
+  var tmr = null;
+  function onChange() {
+    update();
+    clearTimeout(tmr);
+    tmr = setTimeout(saveDraft, 400);
+  }
+  var form = $('form');
+  form.addEventListener('input', onChange);
+  form.addEventListener('change', onChange);
+  form.addEventListener('submit', function (e) { e.preventDefault(); });
+  $('name').addEventListener('change', function () { buildRating(false); onChange(); });
+
+  function blocked(e) {
+    if (!nameVal()) {
+      if (e) e.preventDefault();
+      $('nameErr').hidden = false;
+      var sel = $('name');
+      sel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      sel.focus({ preventScroll: true });
+      return true;
+    }
+    if (!rateOk()) {
+      if (e) e.preventDefault();
+      $('teil4').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return true;
+    }
+    $('nameErr').hidden = true;
+    return false;
+  }
+  wa.addEventListener('click', function (e) { if (blocked(e)) return; saveDraft(); });
+  copyBtn.addEventListener('click', function () {
+    if (blocked()) return;
+    copyText(out.value, out, copyNote, 'Kopiert. Jetzt in den Chat mit ' + cfg.rec + ' einfügen.');
+  });
+
+  // In-page jumps from the progress strip should not change the hash (the hash holds the group config)
+  document.querySelectorAll('.pp').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      var t = $('teil' + a.getAttribute('data-part'));
+      if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  /* ---------- Router ---------- */
+  var lastHash = null;
+  function route() {
+    if (location.hash === lastHash) return;
+    lastHash = location.hash;
+    var c = parseConfig();
+    if (c) showForm(c); else showSetup();
+  }
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
+</body>
+</html>
